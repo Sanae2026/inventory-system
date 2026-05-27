@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Inventory System
 
-## Getting Started
+Sistema de gestión de inventario profesional con Next.js, Prisma y PostgreSQL.
 
-First, run the development server:
+Aplicación web completa para gestionar productos y categorías de un inventario, con filtros en tiempo real, búsqueda, ajuste de stock optimista y base de datos en la nube.
+
+## Despliegue
+
+| | URL |
+|---|---|
+| Frontend | Vercel |
+
+## Características
+
+1. CRUD completo de productos y categorías con validación de datos
+2. Filtros por categoría y búsqueda en tiempo real gestionados con Zustand
+3. Actualización optimista del stock con rollback automático ante errores
+
+## Tecnologías
+
+### Frontend
+
+| Tecnología | Uso |
+|---|---|
+| Next.js 15 | Framework principal con App Router |
+| TypeScript | Tipado estático del código |
+| Tailwind CSS | Estilos y diseño de la interfaz |
+| Shadcn UI | Componentes de interfaz accesibles |
+
+### Backend
+
+| Tecnología | Uso |
+|---|---|
+| Next.js API Routes | Endpoints REST serverless |
+| Prisma | ORM para acceso a la base de datos |
+| Zod | Validación de datos en los endpoints |
+
+### Auxiliares
+
+| Tecnología | Uso |
+|---|---|
+| Neon | Base de datos PostgreSQL en la nube |
+| Zustand | Estado de UI (filtros, sidebar) |
+| TanStack Query | Estado del servidor y caché de datos |
+| Vercel | Despliegue en producción |
+
+## Estructura del proyecto
+inventory-system/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── categories/
+│   │   │   │   ├── route.ts           # GET y POST categorías
+│   │   │   │   └── [id]/route.ts      # PATCH y DELETE categoría
+│   │   │   └── products/
+│   │   │       ├── route.ts           # GET y POST productos
+│   │   │       └── [id]/
+│   │   │           ├── route.ts       # PATCH y DELETE producto
+│   │   │           └── stock/route.ts # PATCH stock
+│   │   ├── categories/
+│   │   │   └── page.tsx               # Página de categorías
+│   │   ├── providers.tsx              # QueryClientProvider
+│   │   ├── layout.tsx                 # Layout con sidebar
+│   │   └── page.tsx                   # Página principal de productos
+│   ├── components/
+│   │   ├── inventory/
+│   │   │   ├── category-filter.tsx    # Filtro por categoría
+│   │   │   ├── product-card.tsx       # Tarjeta de producto
+│   │   │   ├── product-form.tsx       # Formulario de creación
+│   │   │   ├── product-list.tsx       # Lista de productos
+│   │   │   └── search-bar.tsx         # Búsqueda con debounce
+│   │   └── sidebar.tsx                # Sidebar colapsable
+│   ├── hooks/
+│   │   ├── use-categories.ts          # Hook de categorías
+│   │   └── use-products.ts            # Hooks de productos y mutaciones
+│   ├── lib/
+│   │   ├── db.ts                      # Instancia global de Prisma
+│   │   └── query-client.ts            # Configuración de TanStack Query
+│   └── stores/
+│       └── ui-store.ts                # Store de Zustand para UI
+├── prisma/
+│   ├── schema.prisma                  # Modelos de datos
+│   └── seed.ts                        # Datos de ejemplo
+├── docs/
+│   ├── arquitectura.md
+│   ├── api.md
+│   └── state-management.md
+└── README.md
+
+## Descargar y ejecutar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Sanae2026/inventory-system.git
+cd inventory-system
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Crea un archivo `.env` con tus credenciales:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+DATABASE_URL="tu_cadena_de_conexion_neon"
+DIRECT_URL="tu_cadena_de_conexion_neon"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npx prisma migrate dev
+npx prisma db seed
+npm run dev
+```
 
-## Learn More
+## Desplegar en Vercel
 
-To learn more about Next.js, take a look at the following resources:
+### Frontend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Importa el repositorio en [vercel.com](https://vercel.com)
+2. Añade `DATABASE_URL` y `DIRECT_URL` en las variables de entorno
+3. Añade `"postinstall": "prisma generate"` en los scripts de `package.json`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Desarrollado durante las prácticas en Corner Estudios — Sanae — 2026
