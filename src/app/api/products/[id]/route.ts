@@ -12,8 +12,9 @@ const updateProductSchema = z.object({
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const body = await request.json();
   const result = updateProductSchema.safeParse(body);
 
@@ -26,7 +27,7 @@ export async function PATCH(
 
   try {
     const product = await db.product.update({
-      where: { id: params.id },
+      where: { id },
       data: result.data,
       include: { category: { select: { id: true, name: true } } },
     });
@@ -41,10 +42,12 @@ export async function PATCH(
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-    await db.product.delete({ where: { id: params.id } });
+    await db.product.delete({ where: { id } });
     return new NextResponse(null, { status: 204 });
   } catch {
     return NextResponse.json(

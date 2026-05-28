@@ -8,8 +8,9 @@ const updateStockSchema = z.object({
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const body = await request.json();
   const result = updateStockSchema.safeParse(body);
 
@@ -22,7 +23,7 @@ export async function PATCH(
 
   try {
     const product = await db.product.update({
-      where: { id: params.id },
+      where: { id },
       data: { stock: result.data.stock },
       include: { category: { select: { id: true, name: true } } },
     });

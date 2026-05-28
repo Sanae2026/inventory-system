@@ -9,8 +9,9 @@ const updateCategorySchema = z.object({
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const body = await request.json();
   const result = updateCategorySchema.safeParse(body);
 
@@ -23,7 +24,7 @@ export async function PATCH(
 
   try {
     const category = await db.category.update({
-      where: { id: params.id },
+      where: { id },
       data: result.data,
     });
     return NextResponse.json(category);
@@ -37,10 +38,12 @@ export async function PATCH(
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   const products = await db.product.count({
-    where: { categoryId: params.id },
+    where: { categoryId: id },
   });
 
   if (products > 0) {
@@ -51,7 +54,7 @@ export async function DELETE(
   }
 
   try {
-    await db.category.delete({ where: { id: params.id } });
+    await db.category.delete({ where: { id } });
     return new NextResponse(null, { status: 204 });
   } catch {
     return NextResponse.json(
